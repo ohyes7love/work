@@ -11,6 +11,8 @@ import com.rok.seq.controller.dto.GuidInDto;
 import com.rok.seq.controller.dto.GuidOutDto;
 import com.rok.seq.service.GenGuidService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping({ "/seqApi" })
 public class SeqApiController {
@@ -20,10 +22,20 @@ public class SeqApiController {
 	private GenGuidService guidService;
 
 	@RequestMapping({ "/getGuid" })
-	public GuidOutDto getGuid(@RequestBody GuidInDto in) {
-		logger.info("TEST!!! : {}", in);
+	public GuidOutDto getGuid(@Valid @RequestBody GuidInDto in) {
+		logger.info("Input Data : {}", in);
+		
+		String guid = guidService.generateGuid(in) ;
+		
+		logger.info("guidLength: {}", guid.getBytes().length) ;
+		
+		if(guid.getBytes().length != 30) {
+			throw new RuntimeException("GUID 생성오류(길이)") ;
+		}
+		
 		GuidOutDto out = new GuidOutDto();
-		out.setGuid(this.guidService.generateGuid(in));
+		out.setGuid(guid);
+		
 		return out;
 	}
 }
