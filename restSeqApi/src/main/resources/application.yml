@@ -1,2 +1,11 @@
 server:
   port: 9091
+spring:
+  redis:
+    lettuce:
+      pool:
+        max-active: 100
+        max-idle: 100
+        min-idle: 2
+    port: 6379
+    host: 127.0.0.1

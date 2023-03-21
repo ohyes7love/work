@@ -1,21 +1,22 @@
 package com.rok.seq.service.dto;
 
 import java.io.Serializable;
-import java.time.Instant;
-import java.time.LocalDate;
 
 public class SequenceStateDto implements Serializable {
-	private final LocalDate date;
-	private final long currentSequence;
-	private final Instant lastUpdate;
 
-	public SequenceStateDto(LocalDate date, long currentSequence, Instant lastUpdate) {
+	private static final long serialVersionUID = 1L;
+	private String date;
+	private long currentSequence;
+
+	public SequenceStateDto() {
+	}
+	
+	public SequenceStateDto(String date, long currentSequence) {
 		this.date = date;
 		this.currentSequence = currentSequence;
-		this.lastUpdate = lastUpdate;
 	}
 
-	public LocalDate getDate() {
+	public String getDate() {
 		return date;
 	}
 
@@ -23,7 +24,17 @@ public class SequenceStateDto implements Serializable {
 		return currentSequence;
 	}
 
-	public Instant getLastUpdate() {
-		return lastUpdate;
+	public void setDate(String date) {
+		this.date = date;
 	}
+
+	public void setCurrentSequence(long currentSequence) {
+		this.currentSequence = currentSequence;
+	}
+
+	@Override
+	public String toString() {
+		return "SequenceStateDto [date=" + date + ", currentSequence=" + currentSequence + "]";
+	}
+
 }

@@ -1,90 +1,91 @@
 package com.rok.seq.service;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import com.rok.seq.service.dto.SequenceStateDto;
+import com.rok.seq.utils.DateUtils;
 
 @Service
 public class GenSeqService {
-	
+
 	Logger logger = LoggerFactory.getLogger(getClass());
 
-	private static final String FILENAME = "sequence.dat";
-	private LocalDate date = LocalDate.now();
+	private String date = DateUtils.getCurrentDate();
 	private long currentSequence = 0L;
-	private Instant lastUpdate = Instant.EPOCH;
 	private static final long MAX_SEQUENCE_NUMBER = 9999999999L;
 
+	@Autowired
+	private RedisTemplate<String, Object> redisTemplate;
+
 	public synchronized long next(boolean isDayTest, boolean isMaxSeqTest) throws IOException, ClassNotFoundException {
-		File file = new File(FILENAME);
-		if (file.exists()) {
-			try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-				SequenceStateDto state = (SequenceStateDto) in.readObject();
-				if(isDayTest) {
-					date = state.getDate().minusDays(1);
-				} else {
-					date = state.getDate();
-				}
-				currentSequence = state.getCurrentSequence();
-				lastUpdate = state.getLastUpdate();
+
+		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
+
+		if (value != null) {
+			logger.info("redisVal: {}", value);
+			if (isDayTest) {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		        LocalDate localdate = LocalDate.parse(value.getDate(), formatter);
+		        LocalDate modifiedDate = localdate.minusDays(1); // 1일 빼기
+		        String modifiedDateString = modifiedDate.format(formatter);
+				date = modifiedDateString ;
+			} else {
+				date = value.getDate();
 			}
+			currentSequence = value.getCurrentSequence();
 		} else {
-			date = LocalDate.now();
+			date = DateUtils.getCurrentDate();
 			currentSequence = 0L;
-			lastUpdate = Instant.EPOCH;
-			saveState();
 		}
-		
-		if(isMaxSeqTest) {
-			currentSequence = MAX_SEQUENCE_NUMBER-1 ;
-		}
-		if(MAX_SEQUENCE_NUMBER == currentSequence) {
-			throw new RuntimeException("시퀀스 제한 수를 초과하였습니다.") ;
-		}
-		
-		LocalDate now = LocalDate.now();
+
+		String now = DateUtils.getCurrentDate();
 		if (!date.equals(now)) {
 			date = now;
 			currentSequence = 0L;
 		}
+		
+		if (isMaxSeqTest) {
+			currentSequence = MAX_SEQUENCE_NUMBER - 1;
+		}
+		if (MAX_SEQUENCE_NUMBER == currentSequence) {
+			throw new RuntimeException("시퀀스 제한 수를 초과하였습니다.");
+		}
+		
 		currentSequence++;
-		lastUpdate = Instant.now();
-		saveState();
-		
+		saveStateRedis();
+
 		logger.info("seq: {}", currentSequence);
-		
+
 		return currentSequence;
 	}
 
 	public synchronized long current() throws FileNotFoundException, IOException, ClassNotFoundException {
-		File file = new File(FILENAME);
-		if (file.exists()) {
-			try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-				SequenceStateDto state = (SequenceStateDto) in.readObject();
-				date = state.getDate(); 
-				currentSequence = state.getCurrentSequence();
-				lastUpdate = state.getLastUpdate();
-			}
+		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
+
+		if (value != null) {
+			return value.getCurrentSequence();
+		} else {
+			return 0;
 		}
-		return currentSequence;
+
 	}
 
-	private void saveState() throws IOException {
-		try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(FILENAME))) {
-			out.writeObject(new SequenceStateDto(date, currentSequence, lastUpdate));
-		}
+	private void saveStateRedis() throws IOException {
+		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+		SequenceStateDto dto = new SequenceStateDto(date, currentSequence);
+		vop.set("seq", dto);
 	}
 
 }

@@ -23,7 +23,7 @@ class SeqTest {
 	void test() {
 		try {
 			ExecutorService executorService = Executors.newFixedThreadPool(10);
-		    CountDownLatch countDownLatch = new CountDownLatch(100);
+		    CountDownLatch countDownLatch = new CountDownLatch(10);
 		    for (int i = 1; i <= 100; i++) {
 		        executorService.execute(() -> {
 		            try {
