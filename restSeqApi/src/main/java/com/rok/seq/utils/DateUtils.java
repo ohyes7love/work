@@ -2,6 +2,9 @@ package com.rok.seq.utils;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -13,8 +16,14 @@ public class DateUtils {
 	 * @return yyyyMMddHHmmssSSS 패턴 형태의 날짜
 	 */
 	public static String getCurrentDataTimeMillis() {
-		return getDate("yyyyMMddHHmmssSSS") ;
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+        String formattedDateTime = LocalDateTime.now().format(formatter);
+		return formattedDateTime ;
 	}
+	
+	public static String getCurrentDate() {
+        return DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
+    }
 	
 	/**
 	 * 현재 날짜를 주어진 패턴 형태로 리턴하는 펑션
