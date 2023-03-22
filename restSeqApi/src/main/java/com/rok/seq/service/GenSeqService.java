@@ -4,7 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +32,25 @@ public class GenSeqService {
 	private RedisTemplate<String, Object> redisTemplate;
 	@Autowired
 	private RedisLockRepository redisLockRepository;
+	@Autowired
+	private RedissonClient redissonClient ;
 
-	public synchronized long next(boolean isDayTest, boolean isMaxSeqTest) throws IOException, ClassNotFoundException, InterruptedException {
+	public long next(boolean isDayTest, boolean isMaxSeqTest) throws IOException, ClassNotFoundException, InterruptedException {
+		
+		final String lockName = "seqLock";
+        final RLock lock = redissonClient.getLock(lockName);
 		
 		// TEST
-		while (!redisLockRepository.lock("1")) {
-			logger.info("lock 획득 실패! 100ms 대기");
-	        Thread.sleep(100);
-	    } // 락을 획득하기 위해 대기
+//		while (!redisLockRepository.lock("1")) {
+//			logger.info("lock 획득 실패! 100ms 대기");
+//	        Thread.sleep(100);
+//	    } // 락을 획득하기 위해 대기
 		
 	    try {
+	    	// 락점유시도시간, 락사용대기시간, 시간포맷
+	    	if(!lock.tryLock(1, 3, TimeUnit.SECONDS))
+	    		throw new RuntimeException("시퀀스 생성 실패(lock 획득 실패)");
+	    	
 	    	ValueOperations<String, Object> vop = redisTemplate.opsForValue();
 			SequenceStateDto value = (SequenceStateDto) vop.get("seq");
 
@@ -80,8 +92,11 @@ public class GenSeqService {
 			return currentSequence;
 	    } finally {
 	    	logger.info("lock 해제");
-	        redisLockRepository.unlock("1");
+//	        redisLockRepository.unlock("1");
 	        // 락 해제
+	    	if(lock != null && lock.isLocked()) {
+                lock.unlock();
+            }
 	    }
 	}
 
