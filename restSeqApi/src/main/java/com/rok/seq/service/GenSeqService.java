@@ -31,8 +31,6 @@ public class GenSeqService {
 	@Autowired
 	private RedisTemplate<String, Object> redisTemplate;
 	@Autowired
-	private RedisLockRepository redisLockRepository;
-	@Autowired
 	private RedissonClient redissonClient;
 
 	public long next(boolean isDayTest, boolean isMaxSeqTest)
@@ -40,12 +38,6 @@ public class GenSeqService {
 
 		final String lockName = "seqLock";
 		final RLock lock = redissonClient.getLock(lockName);
-
-		// TEST
-//		while (!redisLockRepository.lock("1")) {
-//			logger.info("lock 획득 실패! 100ms 대기");
-//	        Thread.sleep(100);
-//	    } // 락을 획득하기 위해 대기
 
 		// 락점유시도시간, 락사용대기시간, 시간포맷
 		if (lock.tryLock(10, 10, TimeUnit.SECONDS)) {
@@ -104,60 +96,6 @@ public class GenSeqService {
 		} else {
 			throw new RuntimeException("getSequenceErrror(getting lock Error)");
 		}
-//	    	if(!lock.tryLock(1, 3, TimeUnit.SECONDS))
-//	    		throw new RuntimeException("getSequenceErrror(getting lock Error)");
-//	    	
-//	    	ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-//			SequenceStateDto value = (SequenceStateDto) vop.get("seq");
-//
-//			if (value != null) {
-////				logger.info("redisVal: {}", value);
-//				if (isDayTest) {
-//					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-//			        LocalDate localdate = LocalDate.parse(value.getDate(), formatter);
-//			        LocalDate modifiedDate = localdate.minusDays(1); // 1일 빼기
-//			        String modifiedDateString = modifiedDate.format(formatter);
-//					date = modifiedDateString ;
-//				} else {
-//					date = value.getDate();
-//				}
-//				currentSequence = value.getCurrentSequence();
-//			} else {
-//				date = DateUtils.getCurrentDate();
-//				currentSequence = 0L;
-//			}
-//
-//			String now = DateUtils.getCurrentDate();
-//			if (!date.equals(now)) {
-//				date = now;
-//				currentSequence = 0L;
-//			}
-//			
-//			if (isMaxSeqTest) {
-//				currentSequence = MAX_SEQUENCE_NUMBER - 1;
-//			}
-//			if (MAX_SEQUENCE_NUMBER == currentSequence) {
-//				throw new RuntimeException("시퀀스 제한 수를 초과하였습니다.");
-//			}
-//			
-//			currentSequence++;
-//			saveStateRedis();
-//
-//			logger.info("seq: {}", currentSequence);
-//
-//			return currentSequence;
-	}
-
-	public synchronized long current() throws FileNotFoundException, IOException, ClassNotFoundException {
-		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
-
-		if (value != null) {
-			return value.getCurrentSequence();
-		} else {
-			return 0;
-		}
-
 	}
 
 	private void saveStateRedis() throws IOException {
