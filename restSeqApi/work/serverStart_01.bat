@@ -1,0 +1,1 @@
+.\jre\bin\java -jar -Dserver.port=9091 restSeqApi-1.0.0.jar

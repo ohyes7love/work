@@ -1,1 +1,0 @@
-.\jre\bin\java -jar restSeqApi-1.0.0.jar
