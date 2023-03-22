@@ -1,6 +1,5 @@
 package com.rok.seq.service;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -15,7 +14,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
-import com.rok.seq.redis.RedisLockRepository;
 import com.rok.seq.service.dto.SequenceStateDto;
 import com.rok.seq.utils.DateUtils;
 
