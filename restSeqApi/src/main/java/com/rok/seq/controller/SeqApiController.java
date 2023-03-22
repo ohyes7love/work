@@ -27,18 +27,16 @@ public class SeqApiController {
 	@Autowired
 	private GenSeqService seqService;
 
-	@PostMapping("/getGuid")
+	@RequestMapping("/getGuid")
 	public GuidOutDto getGuid(@Valid @RequestBody GuidInDto in) {
 
-		logger.info("Input Data : {}", in);
-
 		String guid = guidService.generateGuid(in);
-
-		logger.info("guidLength: {}", guid.getBytes().length);
 
 		if (guid.getBytes().length != 30) {
 			throw new RuntimeException("GUID 생성오류(길이)");
 		}
+		
+		logger.info("GUID: {}", guid) ;
 
 		GuidOutDto out = new GuidOutDto();
 		out.setGuid(guid);
@@ -46,17 +44,15 @@ public class SeqApiController {
 		return out;
 	}
 
-	@PostMapping("/getSeq")
+	@RequestMapping("/getSeq")
 	public SeqOutDto getSeq(@RequestBody SeqInDto in) {
 
 		SeqOutDto out = new SeqOutDto();
 
 		try {
-			logger.info("currentSeq#1: {}", seqService.current());
 			out.setSequence(seqService.next(in.getIsDayTest(), in.getIsMaxSeqTest()));
-			logger.info("currentSeq#2: {}", seqService.current());
 		} catch (Exception e) {
-			logger.error("", e);
+			logger.error("#####오류내용: ", e);
 			throw new RuntimeException("시퀀스 생성 오류");
 		}
 
