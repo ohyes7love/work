@@ -62,14 +62,20 @@ public class TestApiController {
 	}
 
 	@RequestMapping("/setInit")
-	public void setInit() {
+	public CurrSeqOutDto setInit() {
+		
+		CurrSeqOutDto out = new CurrSeqOutDto();
 
 		try {
 			seqService.setInit();
+			SequenceStateDto serviceOut = seqService.getCurrVal();
+			out.setSequence(serviceOut.getCurrentSequence());
+			out.setDate(serviceOut.getDate());
 		} catch (Exception e) {
 			logger.error("#####오류내용: ", e);
 			throw new RuntimeException("시퀀스 조회 오류");
 		}
+		return out;
 	}
 
 }

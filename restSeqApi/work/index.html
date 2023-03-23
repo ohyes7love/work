@@ -26,8 +26,8 @@
             xhr.onreadystatechange = function () { // 요청 상태 변화 이벤트 핸들러
                 if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
 	                const response = JSON.parse(xhr.responseText); // 응답 JSON 파싱
-	                document.getElementById('response2').innerHTML = ''; // 응답 데이터 출력
-	                document.getElementById('date2').innerHTML = '';
+	                document.getElementById('response2').innerHTML = response.sequence; // 응답 데이터 출력
+	                document.getElementById('date2').innerHTML = response.date;
                 } 
             };
             xhr.send(); // JSON 데이터 전송
