@@ -7,3 +7,8 @@ https://dkswnkk.tistory.com/681
 127.0.0.1:6379> get seq
 "{\"date\":\"20230322\",\"currentSequence\":82014}"
 127.0.0.1:6379>
+
+
+-주석
+-contant
+-초기화시응답
