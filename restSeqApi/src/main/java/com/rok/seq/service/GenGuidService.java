@@ -13,6 +13,13 @@ import com.rok.seq.controller.dto.GuidInDto;
 import com.rok.seq.utils.DateUtils;
 import com.rok.seq.utils.StringUtils;
 
+/**
+ * GUID 채번 업무 로직 처리를 위한 서비스 클래스
+ * 
+ * @author     ohyes7love@naver.com
+ * @version    1.0.0
+ * @since      1.0.0
+ */
 @Service
 public class GenGuidService {
 

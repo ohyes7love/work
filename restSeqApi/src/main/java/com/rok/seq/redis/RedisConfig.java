@@ -15,15 +15,31 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.rok.seq.service.dto.SequenceStateDto;
 
+/**
+ * Redis 연결정보 및 config 정보 설정을 위한 클래스
+ * 
+ * @author     ohyes7love@naver.com
+ * @version    1.0.0
+ * @since      1.0.0
+ */
 @Configuration
 public class RedisConfig {
  
+	/**
+	 *  redis host 정보
+	 */
     @Value("${spring.redis.host}")
     private String redisHost;
 	
+    /**
+	 *  redis port 정보
+	 */
     @Value("${spring.redis.port}")
     private String redisPort;
 	
+    /**
+	 *  redis 연결을 위한 메소드
+	 */
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
@@ -33,6 +49,9 @@ public class RedisConfig {
         return lettuceConnectionFactory;
     }
  
+    /**
+	 *  Object 타입의 value를 저장하기 위한 redisTemplate
+	 */
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -42,6 +61,9 @@ public class RedisConfig {
         return redisTemplate;
     }
     
+    /**
+	 *  String 타입의 value를 저장하기 위한 redisTemplate
+	 */
     @Bean
     public RedisTemplate<String, String> redisTemplateString() {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
@@ -53,6 +75,9 @@ public class RedisConfig {
     
     private static final String REDISSON_HOST_PREFIX = "redis://";
 
+    /**
+	 *  Redisson 사용을 위한 연결 설정
+	 */
     @Bean
     public RedissonClient redissonClient() {
         RedissonClient redisson = null;

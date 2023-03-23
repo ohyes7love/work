@@ -13,6 +13,13 @@ import java.util.StringTokenizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 문자열 관련 처리를 하는 유틸 클래스 
+ * 
+ * @author     ohyes7love@naver.com
+ * @version    1.0.0
+ * @since      1.0.0
+ */
 public class StringUtils {
 	final static Logger logger = LoggerFactory.getLogger(StringUtils.class);
 

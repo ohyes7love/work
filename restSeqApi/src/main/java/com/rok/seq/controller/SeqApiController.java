@@ -20,8 +20,11 @@ import com.rok.seq.service.dto.SequenceStateDto;
 import jakarta.validation.Valid;
 
 /**
- * @author root
- *
+ * 시퀀스 채번과 GUID 채번을 위한 컨트롤러 클래스
+ * 
+ * @author     ohyes7love@naver.com
+ * @version    1.0.0
+ * @since      1.0.0
  */
 @RestController
 @CrossOrigin(origins="*", allowedHeaders = "*")
@@ -29,11 +32,33 @@ import jakarta.validation.Valid;
 public class SeqApiController {
 	Logger logger = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * guid채번 로직 처리를 위한 서비스 클래스
+	 */
 	@Autowired
 	private GenGuidService guidService;
+	/**
+	 * 시퀀스채번 로직 처리를 위한 서비스 클래스
+	 */
 	@Autowired
 	private GenSeqService seqService;
 
+	/**
+	 * 요청 데이터를 받아 guid를 생성하여 리턴한다.
+	 * GUID생성룰: yyyyMMddHHmmssSSS(17) + 시스템코드(3) + 노드번호(2) + 인스턴스번호(2) + 랜덤String(6) = 30자리
+	 * <p>
+	 * GUID생성요청시스템의 시스템코드(3자리), 노드번호(2자리숫자), 인스턴스번호(2자리숫자)를 입력받아
+	 * guid 생성 서비스를 호출한 후 생성된 guid를 리턴한다.
+	 * 입출력 데이터 포맷은 Json이며 입력 데이터에대한 null여부, 길이 Validation 체크를 수행한다.
+	 * <p>
+	 *
+	 * @param - GuidInDto
+	 *		String sendChlCd - GUID생성요청시스템의 채널코드(3자리)
+	 *		Integer sendSysNodeNo - GUID생성요청시스템의 노드번호(2자리숫자)
+	 *		Integer sendSysInstNo - GUID생성요청시스템의 인스턴스번호(2자리숫자)
+	 * @return - GuidOutDto
+	 * 		String guid - 생성된 GUID(30자리)
+	 */
 	@RequestMapping("/getGuid")
 	public GuidOutDto getGuid(@Valid @RequestBody GuidInDto in) {
 
@@ -51,6 +76,17 @@ public class SeqApiController {
 		return out;
 	}
 
+	/**
+	 * 요청을 받아 시퀀스 번호를 채번하여 리턴한다.
+	 * <p>
+	 * 시퀀스 채번 서비스를 호출한 후 채번된 시퀀스 번호를 리턴한다.
+	 * 입출력 데이터 포맷은 Json이다.
+	 * <p>
+	 *
+	 * @param - void
+	 * @return - SeqOutDto
+	 * 		Long sequence - 생성된 시퀀스번호
+	 */
 	@GetMapping("/getSeq")
 	public SeqOutDto getSeq() {
 
@@ -66,6 +102,18 @@ public class SeqApiController {
 		return out;
 	}
 	
+	/**
+	 * 요청을 받아 현재 시퀀스 번호와 날짜를 리턴한다.
+	 * <p>
+	 * 현재 시퀀스 조회 서비스를 호출하여 생성된 응답을 리턴한다.
+	 * 입출력 데이터 포맷은 Json이다.
+	 * <p>
+	 *
+	 * @param - void
+	 * @return - CurrSeqOutDto
+	 * 		Long sequence - 현재 저장되어 있는 시퀀스번호
+	 * 		String date - 현재 저장되어 있는 날짜
+	 */
 	@GetMapping("/getCurrentSeq")
 	public CurrSeqOutDto getCurrentSeq() {
 

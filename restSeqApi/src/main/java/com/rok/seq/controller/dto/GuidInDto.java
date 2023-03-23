@@ -6,17 +6,33 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * GUID 채번을 위한 입력데이터 DTO 
+ * 
+ * @author     ohyes7love@naver.com
+ * @version    1.0.0
+ * @since      1.0.0
+ */
 public class GuidInDto {
 	
+	/**
+	 *  GUID 생성을 요청한 시스템코드
+	 */
 	@NotNull
 	@NotBlank
 	@Length(max = 3)
 	private String sendChlCd;
 	
+	/**
+	 *  GUID 생성을 요청한 시스템의 노드번호
+	 */
 	@NotNull
 	@DecimalMax(value="99") 
 	private Integer sendSysNodeNo;
 	
+	/**
+	 *  GUID 생성을 요청한 시스템의 인스턴스번호
+	 */
 	@NotNull
 	@DecimalMax(value="99") 
 	private Integer sendSysInstNo;
