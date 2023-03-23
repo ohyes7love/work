@@ -3,6 +3,8 @@ package com.rok.seq.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import com.rok.seq.service.GenSeqService;
 import jakarta.validation.Valid;
 
 @RestController
+@CrossOrigin(origins="*", allowedHeaders = "*")
 @RequestMapping({ "/seqApi" })
 public class SeqApiController {
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -53,6 +56,21 @@ public class SeqApiController {
 		} catch (Exception e) {
 			logger.error("#####오류내용: ", e);
 			throw new RuntimeException("시퀀스 생성 오류");
+		}
+
+		return out;
+	}
+	
+	@GetMapping("/getCurrentSeq")
+	public SeqOutDto getCurrentSeq() {
+
+		SeqOutDto out = new SeqOutDto();
+
+		try {
+			out.setSequence(seqService.getCurrVal());
+		} catch (Exception e) {
+			logger.error("#####오류내용: ", e);
+			throw new RuntimeException("시퀀스 조회 오류");
 		}
 
 		return out;

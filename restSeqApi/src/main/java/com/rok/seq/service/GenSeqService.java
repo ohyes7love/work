@@ -95,6 +95,12 @@ public class GenSeqService {
 			throw new RuntimeException("getSequenceErrror(getting lock Error)");
 		}
 	}
+	
+	public long getCurrVal()  {
+		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
+		return value.getCurrentSequence() ;
+	}
 
 	private void saveStateRedis() throws IOException {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();

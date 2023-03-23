@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>JSON 요청 예제</title>
+  </head>
+  <body>
+    <h1>JSON 요청 예제</h1>
+    <button class="" onclick="fn_getSeq();">seq요청</button>
+    <button class="" onclick="fn_getCurrSeq();">현재Seq조회</button>
+    <button class="" onclick="fn_getGuid();">guid요청</button>
+    <div id="response"></div>
+    <script>
+        fn_getCurrSeq = () => {
+            const url = 'http://localhost:9091/seqApi/getCurrentSeq'; // API URL
+            
+            const xhr = new XMLHttpRequest(); // XMLHttpRequest 객체 생성
+            xhr.open('GET', url); // POST 요청 설정
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8'); // Content-Type 설정
+            xhr.onreadystatechange = function () { // 요청 상태 변화 이벤트 핸들러
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText); // 응답 JSON 파싱
+                document.getElementById('response').innerHTML = response.sequence; // 응답 데이터 출력
+                }
+            };
+            xhr.send(); // JSON 데이터 전송
+        }
+
+        fn_getSeq = () => {
+            const url = 'http://localhost:9091/seqApi/getSeq'; // API URL
+			const data = { // JSON 데이터
+                isDayTest: 'false',
+                isMaxSeqTest: 'false'
+            };
+            
+            const xhr = new XMLHttpRequest(); // XMLHttpRequest 객체 생성
+            xhr.open('POST', url, true); // POST 요청 설정
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8'); // Content-Type 설정
+            xhr.onreadystatechange = function () { // 요청 상태 변화 이벤트 핸들러
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText); // 응답 JSON 파싱
+                document.getElementById('response').innerHTML = response.sequence; // 응답 데이터 출력
+                }
+            };
+            xhr.send(JSON.stringify(data)); // JSON 데이터 전송
+        }
+
+        fn_getGuid = () => {
+            const url = 'http://localhost:9091/seqApi/getGuid'; // API URL
+            const data = { // JSON 데이터
+                sendChlCd: 'COR',
+                sendSysNodeNo: 1,
+                sendSysInstNo: 2
+            };
+            const xhr = new XMLHttpRequest(); // XMLHttpRequest 객체 생성
+            xhr.open('POST', url, true); // POST 요청 설정
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8'); // Content-Type 설정
+            xhr.onreadystatechange = function () { // 요청 상태 변화 이벤트 핸들러
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText); // 응답 JSON 파싱
+                document.getElementById('response').innerHTML = response.guid; // 응답 데이터 출력
+                }
+            };
+            xhr.send(JSON.stringify(data)); // JSON 데이터 전송
+        }
+    </script>
+  </body>
+</html>
