@@ -8,14 +8,14 @@
     <h1>채번 API 요청</h1>
     <button class="" onclick="fn_getSeq();">seq요청</button>
     <button class="" onclick="fn_getCurrSeq();">현재Seq조회</button>
-    <button class="" onclick="fn_getGuid();">guid요청</button>
-    <div id="response"></div>
-    <div id="date"></div><br/>
+    <button class="" onclick="fn_getGuid();">guid요청</button><br/>
+    데이터: <div id="response"></div>
+    날짜: <div id="date"></div><br/>
     <button class="" onclick="fn_setPreDate();">이전날짜로변경</button>
     <button class="" onclick="fn_setMaxSeq();">시퀀스최대값변경</button>
-    <button class="" onclick="fn_setSeqInit();">시퀀스초기화</button>
-    <div id="response2"></div>
-    <div id="date2"></div><br/>
+    <button class="" onclick="fn_setSeqInit();">시퀀스초기화</button><br/>
+    데이터: <div id="response2"></div>
+    날짜: <div id="date2"></div><br/>
     <script>
     	fn_setSeqInit = () => {
             const url = 'http://localhost:9090/testApi/setInit'; // API URL
