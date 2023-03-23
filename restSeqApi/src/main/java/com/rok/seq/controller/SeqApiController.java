@@ -46,13 +46,13 @@ public class SeqApiController {
 		return out;
 	}
 
-	@RequestMapping("/getSeq")
-	public SeqOutDto getSeq(@RequestBody SeqInDto in) {
+	@GetMapping("/getSeq")
+	public SeqOutDto getSeq() {
 
 		SeqOutDto out = new SeqOutDto();
 
 		try {
-			out.setSequence(seqService.next(in.getIsDayTest(), in.getIsMaxSeqTest()));
+			out.setSequence(seqService.next());
 		} catch (Exception e) {
 			logger.error("#####오류내용: ", e);
 			throw new RuntimeException("시퀀스 생성 오류");

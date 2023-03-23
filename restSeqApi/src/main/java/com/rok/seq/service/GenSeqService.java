@@ -31,8 +31,7 @@ public class GenSeqService {
 	@Autowired
 	private RedissonClient redissonClient;
 
-	public long next(boolean isDayTest, boolean isMaxSeqTest)
-			throws IOException, ClassNotFoundException, InterruptedException {
+	public long next() throws IOException, ClassNotFoundException, InterruptedException {
 
 		final String lockName = "seqLock";
 		final RLock lock = redissonClient.getLock(lockName);
@@ -47,16 +46,7 @@ public class GenSeqService {
 				SequenceStateDto value = (SequenceStateDto) vop.get("seq");
 
 				if (value != null) {
-//	    				logger.info("redisVal: {}", value);
-					if (isDayTest) {
-						DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-						LocalDate localdate = LocalDate.parse(value.getDate(), formatter);
-						LocalDate modifiedDate = localdate.minusDays(1); // 1일 빼기
-						String modifiedDateString = modifiedDate.format(formatter);
-						date = modifiedDateString;
-					} else {
-						date = value.getDate();
-					}
+					date = value.getDate();
 					currentSequence = value.getCurrentSequence();
 				} else {
 					date = DateUtils.getCurrentDate();
@@ -69,9 +59,6 @@ public class GenSeqService {
 					currentSequence = 0L;
 				}
 
-				if (isMaxSeqTest) {
-					currentSequence = MAX_SEQUENCE_NUMBER - 1;
-				}
 				if (MAX_SEQUENCE_NUMBER == currentSequence) {
 					throw new RuntimeException("시퀀스 제한 수를 초과하였습니다.");
 				}
@@ -95,11 +82,11 @@ public class GenSeqService {
 			throw new RuntimeException("getSequenceErrror(getting lock Error)");
 		}
 	}
-	
-	public long getCurrVal()  {
+
+	public long getCurrVal() {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
 		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
-		return value.getCurrentSequence() ;
+		return value.getCurrentSequence();
 	}
 
 	private void saveStateRedis() throws IOException {
