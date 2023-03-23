@@ -1,8 +1,6 @@
 package com.rok.seq.service;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
@@ -86,6 +84,8 @@ public class GenSeqService {
 	public long getCurrVal() {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
 		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
+		logger.info("현재 seq 번호: {}", value.getCurrentSequence());
+		
 		return value.getCurrentSequence();
 	}
 

@@ -11,13 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rok.seq.controller.dto.GuidInDto;
 import com.rok.seq.controller.dto.GuidOutDto;
-import com.rok.seq.controller.dto.SeqInDto;
 import com.rok.seq.controller.dto.SeqOutDto;
 import com.rok.seq.service.GenGuidService;
 import com.rok.seq.service.GenSeqService;
 
 import jakarta.validation.Valid;
 
+/**
+ * @author root
+ *
+ */
 @RestController
 @CrossOrigin(origins="*", allowedHeaders = "*")
 @RequestMapping({ "/seqApi" })

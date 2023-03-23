@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import com.rok.seq.controller.dto.GuidInDto;
-import com.rok.seq.service.dto.SequenceStateDto;
 import com.rok.seq.utils.DateUtils;
 import com.rok.seq.utils.StringUtils;
 
