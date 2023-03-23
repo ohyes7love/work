@@ -4,20 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.rok.seq.controller.dto.CurrSeqOutDto;
-import com.rok.seq.controller.dto.GuidInDto;
-import com.rok.seq.controller.dto.GuidOutDto;
-import com.rok.seq.controller.dto.SeqOutDto;
-import com.rok.seq.service.GenGuidService;
 import com.rok.seq.service.GenSeqService;
 import com.rok.seq.service.dto.SequenceStateDto;
-
-import jakarta.validation.Valid;
 
 /**
  * @author root
@@ -25,53 +18,20 @@ import jakarta.validation.Valid;
  */
 @RestController
 @CrossOrigin(origins="*", allowedHeaders = "*")
-@RequestMapping({ "/seqApi" })
-public class SeqApiController {
+@RequestMapping({ "/testApi" })
+public class TestApiController {
 	Logger logger = LoggerFactory.getLogger(getClass());
 
 	@Autowired
-	private GenGuidService guidService;
-	@Autowired
 	private GenSeqService seqService;
 
-	@RequestMapping("/getGuid")
-	public GuidOutDto getGuid(@Valid @RequestBody GuidInDto in) {
-
-		String guid = guidService.generateGuid(in);
-
-		if (guid.getBytes().length != 30) {
-			throw new RuntimeException("GUID 생성오류(길이)");
-		}
-		
-		logger.info("GUID: {}", guid) ;
-
-		GuidOutDto out = new GuidOutDto();
-		out.setGuid(guid);
-
-		return out;
-	}
-
-	@GetMapping("/getSeq")
-	public SeqOutDto getSeq() {
-
-		SeqOutDto out = new SeqOutDto();
-
-		try {
-			out.setSequence(seqService.next());
-		} catch (Exception e) {
-			logger.error("#####오류내용: ", e);
-			throw new RuntimeException("시퀀스 생성 오류");
-		}
-
-		return out;
-	}
-	
-	@GetMapping("/getCurrentSeq")
-	public CurrSeqOutDto getCurrentSeq() {
+	@RequestMapping("/setPreDate")
+	public CurrSeqOutDto setPreDate() {
 
 		CurrSeqOutDto out = new CurrSeqOutDto();
 
 		try {
+			seqService.changePreDate() ;
 			SequenceStateDto serviceOut = seqService.getCurrVal() ;
 			out.setSequence(serviceOut.getCurrentSequence());
 			out.setDate(serviceOut.getDate()) ;
@@ -82,4 +42,23 @@ public class SeqApiController {
 
 		return out;
 	}
+	
+	@RequestMapping("/setMaxSeq")
+	public CurrSeqOutDto setMaxSeq() {
+
+		CurrSeqOutDto out = new CurrSeqOutDto();
+
+		try {
+			seqService.changeMaxSeq() ;
+			SequenceStateDto serviceOut = seqService.getCurrVal() ;
+			out.setSequence(serviceOut.getCurrentSequence());
+			out.setDate(serviceOut.getDate()) ;
+		} catch (Exception e) {
+			logger.error("#####오류내용: ", e);
+			throw new RuntimeException("시퀀스 조회 오류");
+		}
+
+		return out;
+	}
+
 }

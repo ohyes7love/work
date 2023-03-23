@@ -1,6 +1,8 @@
 package com.rok.seq.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.TimeUnit;
 
 import org.redisson.api.RLock;
@@ -81,17 +83,51 @@ public class GenSeqService {
 		}
 	}
 
-	public long getCurrVal() {
+	public SequenceStateDto getCurrVal() {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
 		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
 		logger.info("현재 seq 번호: {}", value.getCurrentSequence());
-		
-		return value.getCurrentSequence();
+
+		return value;
+	}
+
+	public void changePreDate() {
+
+		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
+
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+		LocalDate localdate = LocalDate.parse(value.getDate(), formatter);
+		LocalDate modifiedDate = localdate.minusDays(1); // 1일 빼기
+		String modifiedDateString = modifiedDate.format(formatter);
+
+		try {
+			saveStateRedis(modifiedDateString, value.getCurrentSequence());
+		} catch (IOException e) {
+			throw new RuntimeException("이전 날짜로 변경 중 오류가 발생하였습니다.");
+		}
+	}
+
+	public void changeMaxSeq() {
+		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
+
+		try {
+			saveStateRedis(value.getDate(), MAX_SEQUENCE_NUMBER - 1);
+		} catch (IOException e) {
+			throw new RuntimeException("이전 날짜로 변경 중 오류가 발생하였습니다.");
+		}
 	}
 
 	private void saveStateRedis() throws IOException {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
 		SequenceStateDto dto = new SequenceStateDto(date, currentSequence);
+		vop.set("seq", dto);
+	}
+
+	private void saveStateRedis(String dateString, long currSeq) throws IOException {
+		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
+		SequenceStateDto dto = new SequenceStateDto(dateString, currSeq);
 		vop.set("seq", dto);
 	}
 
