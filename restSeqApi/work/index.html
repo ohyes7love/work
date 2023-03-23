@@ -13,9 +13,26 @@
     <div id="date"></div><br/>
     <button class="" onclick="fn_setPreDate();">이전날짜로변경</button>
     <button class="" onclick="fn_setMaxSeq();">시퀀스최대값변경</button>
+    <button class="" onclick="fn_setSeqInit();">시퀀스초기화</button>
     <div id="response2"></div>
     <div id="date2"></div><br/>
     <script>
+    	fn_setSeqInit = () => {
+            const url = 'http://localhost:9090/testApi/setInit'; // API URL
+            
+            const xhr = new XMLHttpRequest(); // XMLHttpRequest 객체 생성
+            xhr.open('GET', url); // POST 요청 설정
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8'); // Content-Type 설정
+            xhr.onreadystatechange = function () { // 요청 상태 변화 이벤트 핸들러
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+	                const response = JSON.parse(xhr.responseText); // 응답 JSON 파싱
+	                document.getElementById('response2').innerHTML = ''; // 응답 데이터 출력
+	                document.getElementById('date2').innerHTML = '';
+                } 
+            };
+            xhr.send(); // JSON 데이터 전송
+        }
+        
     	fn_setPreDate = () => {
             const url = 'http://localhost:9090/testApi/setPreDate'; // API URL
             
@@ -75,7 +92,9 @@
 	                const response = JSON.parse(xhr.responseText); // 응답 JSON 파싱
 	                document.getElementById('response').innerHTML = response.sequence; // 응답 데이터 출력
 	                document.getElementById('date').innerHTML = '';
-                } 
+                } else if(xhr.status === 500) {
+                	alert('오류발생');
+                }
             };
             xhr.send(); // JSON 데이터 전송
         }

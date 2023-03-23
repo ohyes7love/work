@@ -108,6 +108,14 @@ public class GenSeqService {
 		}
 	}
 
+	public void setInit() {
+		try {
+			saveStateRedis(DateUtils.getCurrentDate(), 0L);
+		} catch (IOException e) {
+			throw new RuntimeException("초기화 중 오류가 발생하였습니다.");
+		}
+	}
+
 	public void changeMaxSeq() {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
 		SequenceStateDto value = (SequenceStateDto) vop.get("seq");
@@ -115,7 +123,7 @@ public class GenSeqService {
 		try {
 			saveStateRedis(value.getDate(), MAX_SEQUENCE_NUMBER - 1);
 		} catch (IOException e) {
-			throw new RuntimeException("이전 날짜로 변경 중 오류가 발생하였습니다.");
+			throw new RuntimeException("최대 시퀀스 값 변경 중 오류가 발생하였습니다.");
 		}
 	}
 

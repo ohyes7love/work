@@ -17,7 +17,7 @@ import com.rok.seq.service.dto.SequenceStateDto;
  *
  */
 @RestController
-@CrossOrigin(origins="*", allowedHeaders = "*")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequestMapping({ "/testApi" })
 public class TestApiController {
 	Logger logger = LoggerFactory.getLogger(getClass());
@@ -31,10 +31,10 @@ public class TestApiController {
 		CurrSeqOutDto out = new CurrSeqOutDto();
 
 		try {
-			seqService.changePreDate() ;
-			SequenceStateDto serviceOut = seqService.getCurrVal() ;
+			seqService.changePreDate();
+			SequenceStateDto serviceOut = seqService.getCurrVal();
 			out.setSequence(serviceOut.getCurrentSequence());
-			out.setDate(serviceOut.getDate()) ;
+			out.setDate(serviceOut.getDate());
 		} catch (Exception e) {
 			logger.error("#####오류내용: ", e);
 			throw new RuntimeException("시퀀스 조회 오류");
@@ -42,23 +42,34 @@ public class TestApiController {
 
 		return out;
 	}
-	
+
 	@RequestMapping("/setMaxSeq")
 	public CurrSeqOutDto setMaxSeq() {
 
 		CurrSeqOutDto out = new CurrSeqOutDto();
 
 		try {
-			seqService.changeMaxSeq() ;
-			SequenceStateDto serviceOut = seqService.getCurrVal() ;
+			seqService.changeMaxSeq();
+			SequenceStateDto serviceOut = seqService.getCurrVal();
 			out.setSequence(serviceOut.getCurrentSequence());
-			out.setDate(serviceOut.getDate()) ;
+			out.setDate(serviceOut.getDate());
 		} catch (Exception e) {
 			logger.error("#####오류내용: ", e);
 			throw new RuntimeException("시퀀스 조회 오류");
 		}
 
 		return out;
+	}
+
+	@RequestMapping("/setInit")
+	public void setInit() {
+
+		try {
+			seqService.setInit();
+		} catch (Exception e) {
+			logger.error("#####오류내용: ", e);
+			throw new RuntimeException("시퀀스 조회 오류");
+		}
 	}
 
 }
