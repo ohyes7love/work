@@ -23,17 +23,33 @@ import com.rok.seq.utils.StringUtils;
 @Service
 public class GenGuidService {
 
+	/**
+	 * 랜덤 값을 처리하기위해 정의한 변수
+	 */
 	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	/**
+	 * 랜덤 값을 처리하기 위해 정의한 RANDOM 변수
+	 */
 	private static final Random RANDOM = new Random();
+	/**
+	 * redis 연결을 위한 RedisTemplate
+	 */
 	@Autowired
 	private RedisTemplate<String, String> redisTemplateString;
 
 	/**
-	 * guid 생성 요청 시스템코드와 해당 시스템의 노드번호, 인스턴스번호를 받아 guid를 채번한다. 규칙:
-	 * yyyyMMddHHmmssSSS(17) + 시스템코드(3) + 노드번호(2) + 인스턴스번호(2) + 랜덤String(6) = 30자리
-	 * 
-	 * @param in String sendChlCd : guid채번요청 시스템코드 Integer sendSysNodeNo : guid채번요청
-	 *           시스템의 노드번호 Integer sendSysInstNo : guid채번요청 시스템의 인스턴스번호
+	 * guid를 생성한다.
+	 * GUID생성룰: yyyyMMddHHmmssSSS(17) + 시스템코드(3) + 노드번호(2) + 인스턴스번호(2) + 랜덤String(6) = 30자리
+	 * <p>
+	 * 생성룰에 따라 guid를 생성 후 생성 문자열을 리턴한다.
+	 * 중복검증: redis에 guid를 key로 입력하여 redis에 데이터가 존재하면 중복발생으로 오류를 처리한다.
+	 * redis에 입력된 데이터는 TTL이 1초로 설정되어 1초 뒤 삭제된다.
+	 * <p>
+	 *
+	 * @param GuidInDto 
+	 * 		String sendChlCd : guid채번요청 시스템코드 
+	 * 		Integer sendSysNodeNo : guid채번요청 시스템의 노드번호 
+	 * 		Integer sendSysInstNo : guid채번요청 시스템의 인스턴스번호
 	 * @return String guid : 생성된 guid
 	 */
 	public String generateGuid(GuidInDto in) {
@@ -59,10 +75,12 @@ public class GenGuidService {
 		return guid;
 	}
 
+	/**
+	 * append를 위한 메소드
+	 */
 	private Appendable append(Appendable appendable, CharSequence sequence) {
 		return append(appendable, sequence, sequence.length());
 	}
-
 	private Appendable append(Appendable appendable, CharSequence sequence, int length) {
 		try {
 			for (int i = 0; i < length; i++)
@@ -72,6 +90,9 @@ public class GenGuidService {
 		return appendable;
 	}
 	
+	/**
+	 * 랜덤 String 6자리 문자열을 만들기 위한 메소드.
+	 */
 	private String generateRandomString(int length) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
