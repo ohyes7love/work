@@ -13,6 +13,10 @@
 - [API 서버 테스트 방법](https://github.com/ohyes7love/work/wiki/API-%EC%84%9C%EB%B2%84-Test-%EB%B0%A9%EB%B2%95)
 ---
 
+### 현재 시퀀스 조회방법
+- [현재 시퀀스 조회](https://github.com/ohyes7love/work/wiki/%ED%98%84%EC%9E%AC-%EC%8B%9C%ED%80%80%EC%8A%A4-%EC%A1%B0%ED%9A%8C%EB%B0%A9%EB%B2%95)
+---
+
 ### 사용 명세
 
 ---
