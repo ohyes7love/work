@@ -28,4 +28,4 @@
 ---
 
 ### 가용성 확보를 위한 구성 방안
-
+- [가용성 확보를 위한 구성 방안](https://github.com/ohyes7love/work/wiki/%EA%B0%80%EC%9A%A9%EC%84%B1-%ED%99%95%EB%B3%B4%EB%A5%BC-%EC%9C%84%ED%95%9C-%EA%B5%AC%EC%84%B1-%EB%B0%A9%EC%95%88)
