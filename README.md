@@ -2,7 +2,7 @@
 
 ### 구성도
 - API 서버 구성 및 테스트 구성도
-- ![image](https://user-images.githubusercontent.com/70003300/227468334-7ee8acdb-91be-4550-92bf-624bc9afe381.png)
+- ![image](https://user-images.githubusercontent.com/70003300/227468870-389731f3-9287-482f-8821-9f42e7a607eb.png)
 
 ---
 
