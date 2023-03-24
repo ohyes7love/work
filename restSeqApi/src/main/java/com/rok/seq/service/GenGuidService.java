@@ -64,16 +64,16 @@ public class GenGuidService {
 	    
 	    String guid = guidBuffer.toString() ; // guidBuffer를 String 형태로 변환하여 guid 변수에 할당
 
+	    /** 중복 테스트 로직! */
 	    // Redis에 guid를 key로 가지는 value 값이 있는지 확인
-	    ValueOperations<String, String> vop = redisTemplateString.opsForValue();
-	    String value = vop.get(guid);
-	    
-	    // 기존 중복 테스트를 위한 코드로 작성하였으나, 중복 체크가 의미가 있다고 생각되어 로직 추가.
-	    if(StringUtils.isEmpty(value)) { // value 값이 없으면 guid를 key로 하는 value 값을 1초 동안 저장하여 중복 체크
-	        vop.set(guid, "dup", 1, TimeUnit.SECONDS) ;
-	    } else { // value 값이 있으면 guid 중복으로 RuntimeException 발생
-	        throw new RuntimeException("guid 중복이 발생하였습니다. [" + guid +"]") ;
-	    }
+//	    ValueOperations<String, String> vop = redisTemplateString.opsForValue();
+//	    String value = vop.get(guid);
+//	    if(StringUtils.isEmpty(value)) { // value 값이 없으면 guid를 key로 하는 value 값을 1초 동안 저장하여 중복 체크
+//	        vop.set(guid, "dup", 1, TimeUnit.SECONDS) ;
+//	    } else { // value 값이 있으면 guid 중복으로 RuntimeException 발생
+//	        throw new RuntimeException("guid 중복이 발생하였습니다. [" + guid +"]") ;
+//	    }
+	    /** 중복 테스트 로직! */
 
 	    return guid;
 	}
@@ -109,16 +109,19 @@ public class GenGuidService {
 	}
 	
 	/**
-	 * 지정된 길이의 랜덤 문자열 생성 메소드
+	 * 주어진 길이만큼의 랜덤한 문자열을 생성하는 메소드
 	 *
-	 * @param length
-	 * @return 랜덤 문자열
+	 * @param length 생성할 문자열의 길이
+	 * @return 생성된 랜덤 문자열
 	 */
 	private String generateRandomString(int length) {
+	    // 길이가 length인 char[] 배열 buffer 생성
 	    char[] buffer = new char[length];
+	    // 배열 buffer를 랜덤 문자열로 채움
 	    for (int i = 0; i < length; i++) {
 	        buffer[i] = CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length()));
 	    }
+	    // 채워진 buffer를 이용하여 String 객체 생성 및 리턴
 	    return new String(buffer);
 	}
 }

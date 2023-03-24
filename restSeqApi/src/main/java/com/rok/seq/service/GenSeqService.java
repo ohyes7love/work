@@ -52,6 +52,9 @@ public class GenSeqService {
 	 */
 	@Autowired
 	private RedissonClient redissonClient;
+	
+	@Autowired
+	private RedisTemplate<String, String> redisTemplateString;
 
 	/**
 	 * 시퀀스를 채번하여 리턴한다.
@@ -95,6 +98,20 @@ public class GenSeqService {
 				}
 
 				currentSequence++; // 시퀀스 값을 증가시킨다.
+				
+				/** 중복 테스트 로직! */
+				// redis를 이용하여 중복 테스트
+//				ValueOperations<String, String> vopTest = redisTemplateString.opsForValue();
+//				String seqString = Long.toString(currentSequence) ;
+//			    String checkVal = vopTest.get(seqString);
+//			    if(StringUtils.isEmpty(checkVal)) {
+//			    	// 중복아님
+//			    	vopTest.set(seqString, "dupCheck", 1, TimeUnit.SECONDS) ;
+//			    } else {
+//			    	throw new RuntimeException("seq 중복이 발생하였습니다. [" + seqString +"]") ;
+//			    }
+			    /** 중복 테스트 로직! */
+				
 				saveStateRedis(date, currentSequence); // 시퀀스 정보를 redis에 저장한다.
 
 				logger.info("seq: {}", currentSequence);
