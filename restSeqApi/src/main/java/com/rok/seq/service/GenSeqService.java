@@ -61,7 +61,7 @@ public class GenSeqService {
 		// 레디스 락 생성
 		final RLock lock = redissonClient.getLock(SeqApiConstant.LOCK_KEY);
 		String date;
-		long currentSequence = 0L;
+		long currentSequence;
 
 		if (lock.tryLock(10, 10, TimeUnit.SECONDS)) { // 10초 동안 분산락을 얻을 수 있도록 시도한다.
 			try {
@@ -90,7 +90,7 @@ public class GenSeqService {
 
 				currentSequence++; // 시퀀스 값을 증가시킨다.
 				
-				/** 중복 테스트 로직! */
+				/** 중복체크 테스트 로직! */
 				// redis를 이용하여 중복 테스트
 //				ValueOperations<String, String> vopTest = redisTemplateString.opsForValue();
 //				String seqString = Long.toString(currentSequence) ;
@@ -101,7 +101,7 @@ public class GenSeqService {
 //			    } else {
 //			    	throw new RuntimeException("seq 중복이 발생하였습니다. [" + seqString +"]") ;
 //			    }
-			    /** 중복 테스트 로직! */
+			    /** 중복체크 테스트 로직! */
 				
 				saveStateRedis(date, currentSequence); // 시퀀스 정보를 redis에 저장한다.
 
