@@ -5,6 +5,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.stereotype.Service;
 
+import com.rok.seq.constant.SeqApiConstant;
 import com.rok.seq.controller.dto.GuidInDto;
 import com.rok.seq.utils.DateUtils;
 
@@ -18,10 +19,6 @@ import com.rok.seq.utils.DateUtils;
 @Service
 public class GenGuidService {
 
-	/**
-	 * 랜덤 값을 처리하기위해 정의한 변수
-	 */
-	private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	/**
 	 * 랜덤 값을 처리하기 위해 정의한 RANDOM 변수
 	 * ThreadLocalRandom은 동시성 문제를 해결하기 위해 각 쓰레드마다 생성된 인스턴스에서 각각 난수를 반환한다. 따라서 Random과 같은 경합 문제가 발생하지 않아 안전하며, 성능상 이점이 있어 사용
@@ -114,7 +111,7 @@ public class GenGuidService {
 	    char[] buffer = new char[length];
 	    // 배열 buffer를 랜덤 문자열로 채움
 	    for (int i = 0; i < length; i++) {
-	        buffer[i] = CHARACTERS.charAt(RANDOM.nextInt(CHARACTERS.length()));
+	        buffer[i] = SeqApiConstant.CHARACTERS.charAt(RANDOM.nextInt(SeqApiConstant.CHARACTERS.length()));
 	    }
 	    // 채워진 buffer를 이용하여 String 객체 생성 및 리턴
 	    return new String(buffer);

@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import com.rok.seq.constant.SeqApiConstant;
 import com.rok.seq.service.dto.SequenceStateDto;
 import com.rok.seq.utils.DateUtils;
 
@@ -28,19 +29,6 @@ import com.rok.seq.utils.DateUtils;
 public class GenSeqService {
 
 	Logger logger = LoggerFactory.getLogger(getClass());
-
-	/**
-	 * 시퀀스 최대값
-	 */
-	private static final long MAX_SEQUENCE_NUMBER = 9999999999L;
-	/**
-	 * 동시접근제어를 위한 lock key값
-	 */
-	private static final String lockName = "seqLock";
-	/**
-	 * redis에 저장하는 시퀀스정보의 key
-	 */
-	private static final String seqKey = "seq";
 
 	/**
 	 * redis 연결을 위한 RedisTemplate
@@ -71,7 +59,7 @@ public class GenSeqService {
 	public long next() throws IOException, ClassNotFoundException, InterruptedException {
 
 		// 레디스 락 생성
-		final RLock lock = redissonClient.getLock(lockName);
+		final RLock lock = redissonClient.getLock(SeqApiConstant.LOCK_KEY);
 		String date;
 		long currentSequence = 0L;
 
@@ -81,7 +69,7 @@ public class GenSeqService {
 				logger.info("tryLock thread---{}, lock:{}", Thread.currentThread().getId(), lock);
 
 				ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-				SequenceStateDto value = (SequenceStateDto) vop.get(seqKey); // Redis에서 시퀀스 정보를 조회
+				SequenceStateDto value = (SequenceStateDto) vop.get(SeqApiConstant.SEQ_KEY); // Redis에서 시퀀스 정보를 조회
 
 				if (value != null) { // Redis에 시퀀스 정보가 저장되어 있으면
 					date = value.getDate(); // 날짜 정보를 가져온다.
@@ -96,7 +84,7 @@ public class GenSeqService {
 					currentSequence = 0L; // 시퀀스 번호를 0으로 초기화한다.
 				}
 
-				if (MAX_SEQUENCE_NUMBER == currentSequence) { // 시퀀스 번호가 최대값을 초과하면
+				if (SeqApiConstant.MAX_SEQUENCE_NUMBER == currentSequence) { // 시퀀스 번호가 최대값을 초과하면
 					throw new RuntimeException("시퀀스 제한 수를 초과하였습니다."); // 오류를 발생시킨다.
 				}
 
@@ -144,7 +132,7 @@ public class GenSeqService {
 	 */
 	public SequenceStateDto getCurrVal() {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-		SequenceStateDto value = (SequenceStateDto) vop.get(seqKey);
+		SequenceStateDto value = (SequenceStateDto) vop.get(SeqApiConstant.SEQ_KEY);
 		logger.info("현재 seq 번호: {}", value.getCurrentSequence());
 
 		return value;
@@ -162,7 +150,7 @@ public class GenSeqService {
 	public void changePreDate() {
 
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-		SequenceStateDto value = (SequenceStateDto) vop.get(seqKey);
+		SequenceStateDto value = (SequenceStateDto) vop.get(SeqApiConstant.SEQ_KEY);
 
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 		LocalDate localdate = LocalDate.parse(value.getDate(), formatter);
@@ -203,10 +191,10 @@ public class GenSeqService {
 	 */
 	public void changeMaxSeq() {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
-		SequenceStateDto value = (SequenceStateDto) vop.get(seqKey);
+		SequenceStateDto value = (SequenceStateDto) vop.get(SeqApiConstant.SEQ_KEY);
 
 		try {
-			saveStateRedis(value.getDate(), MAX_SEQUENCE_NUMBER - 1);
+			saveStateRedis(value.getDate(), SeqApiConstant.MAX_SEQUENCE_NUMBER - 1);
 		} catch (IOException e) {
 			throw new RuntimeException("최대 시퀀스 값 변경 중 오류가 발생하였습니다.");
 		}
@@ -225,7 +213,7 @@ public class GenSeqService {
 	private void saveStateRedis(String dateString, long currSeq) throws IOException {
 		ValueOperations<String, Object> vop = redisTemplate.opsForValue();
 		SequenceStateDto dto = new SequenceStateDto(dateString, currSeq);
-		vop.set(seqKey, dto);
+		vop.set(SeqApiConstant.SEQ_KEY, dto);
 	}
 
 }
