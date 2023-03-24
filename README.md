@@ -20,7 +20,7 @@
 ---
 
 ### 사용 명세
-
+- [API 서버 사용 명세](https://github.com/ohyes7love/work/wiki/API-%EC%84%9C%EB%B2%84-%EA%B5%AC%EC%B6%95-%EC%82%AC%EC%9A%A9%EB%AA%85%EC%84%B8)
 ---
 
 ### 최대 처리량 산정 및 산정 근거
