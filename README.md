@@ -10,7 +10,7 @@
 ---
 
 ### 테스트 방법
-
+- [API 서버 테스트 방법](https://github.com/ohyes7love/work/wiki/API-%EC%84%9C%EB%B2%84-Test-%EB%B0%A9%EB%B2%95)
 ---
 
 ### 사용 명세
