@@ -1,9 +1,9 @@
 # 채번 API 서버
-### API 서버 구성도
+### 구성도
+#### API 서버 구성도
 - ![image](https://user-images.githubusercontent.com/70003300/227545433-0990d917-6703-4488-9e4e-233fec3c40e1.png)
 ---
-
-### 테스트 환경 구성도
+#### 테스트 환경 구성도
 - ![image](https://user-images.githubusercontent.com/70003300/227468870-389731f3-9287-482f-8821-9f42e7a607eb.png)
 ---
 
