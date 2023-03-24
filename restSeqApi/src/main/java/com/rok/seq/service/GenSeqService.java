@@ -53,8 +53,11 @@ public class GenSeqService {
 	@Autowired
 	private RedissonClient redissonClient;
 	
-	@Autowired
-	private RedisTemplate<String, String> redisTemplateString;
+	/**
+	 * 중복체크를 위한 redis 연결을 위한 RedisTemplate
+	 */
+//	@Autowired
+//	private RedisTemplate<String, String> redisTemplateString;
 
 	/**
 	 * 시퀀스를 채번하여 리턴한다.

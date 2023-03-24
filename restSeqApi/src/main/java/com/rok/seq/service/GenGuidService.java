@@ -2,16 +2,11 @@ package com.rok.seq.service;
 
 import java.io.IOException;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import com.rok.seq.controller.dto.GuidInDto;
 import com.rok.seq.utils.DateUtils;
-import com.rok.seq.utils.StringUtils;
 
 /**
  * GUID 채번 업무 로직 처리를 위한 서비스 클래스
@@ -33,10 +28,10 @@ public class GenGuidService {
 	 */
 	private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 	/**
-	 * redis 연결을 위한 RedisTemplate
+	 * 중복체크를 위한 redis 연결을 위한 RedisTemplate
 	 */
-	@Autowired
-	private RedisTemplate<String, String> redisTemplateString;
+//	@Autowired
+//	private RedisTemplate<String, String> redisTemplateString;
 
 	/**
 	 * guid를 생성한다.
