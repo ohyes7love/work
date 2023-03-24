@@ -1,7 +1,9 @@
 # 채번 API 서버
 
 ### 구성도
-- ㅇㅇㅇ
+- API 서버 구성 및 테스트 구성도
+- ![image](https://user-images.githubusercontent.com/70003300/227468334-7ee8acdb-91be-4550-92bf-624bc9afe381.png)
+
 ---
 
 ### 어플리케이션 설치 및 기동방법
