@@ -6,7 +6,7 @@
 ---
 
 ### 어플리케이션 설치 및 기동방법
-- [설치 및 기동방법] (https://github.com/ohyes7love/work/wiki/API-%EC%84%9C%EB%B2%84-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EA%B8%B0%EB%8F%99%EB%B0%A9%EB%B2%95)
+- [설치 및 기동방법](https://github.com/ohyes7love/work/wiki/API-%EC%84%9C%EB%B2%84-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EA%B8%B0%EB%8F%99%EB%B0%A9%EB%B2%95)
 ---
 
 ### 테스트 방법
