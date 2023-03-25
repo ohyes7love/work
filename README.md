@@ -24,7 +24,7 @@
 ---
 
 ### 6. 최대 처리량 산정 및 산정 근거
-
+- [최대 처리량 산정 & 산정근거](https://github.com/ohyes7love/work/wiki/API-%EC%84%9C%EB%B2%84-%EC%B5%9C%EB%8C%80-%EC%B2%98%EB%A6%AC%EB%9F%89-%EC%B5%9C%EB%8C%80-%EC%B2%98%EB%A6%AC%EB%9F%89-%EC%82%B0%EC%A0%95-%EA%B7%BC%EA%B1%B0)
 ---
 
 ### 7. 가용성 확보를 위한 구성 방안
