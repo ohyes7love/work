@@ -3,11 +3,10 @@ package com.rok.seq.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,18 +49,21 @@ public class WebfluxTestController {
 
 		return Mono.just(out);
 	}
+	
+	@PostMapping("/getGuid")
+    public Mono<GuidOutDto> getGuid(@Valid @RequestBody Mono<GuidInDto> in) {
+        return in.map(guidService::generateGuid)
+                .doOnNext(guid -> {
+                    if (guid.getBytes().length != 30) {
+                        throw new RuntimeException("GUID 생성오류(길이)");
+                    }
+                    logger.info("GUID: {}", guid);
+                })
+                .map(guid -> {
+                    GuidOutDto out = new GuidOutDto();
+                    out.setGuid(guid);
+                    return out;
+                });
+    }
 
-	@PostMapping(value = "/getGuid", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public Mono<GuidOutDto> getGuid(@Valid @ModelAttribute GuidInDto inDto) {
-	    return Mono.just(inDto)
-	            .map(guidService::generateGuid)
-	            .filter(guid -> guid.getBytes().length == 30)
-	            .switchIfEmpty(Mono.error(new RuntimeException("GUID 생성오류(길이)")))
-	            .doOnNext(guid -> logger.info("GUID: {}", guid))
-	            .map(guid -> {
-	                GuidOutDto outDto = new GuidOutDto();
-	                outDto.setGuid(guid);
-	                return outDto;
-	            });
-	}
 }

@@ -41,7 +41,7 @@ public class GuidInDto {
 	@DecimalMax(value="99") 
 	@JsonProperty("sendSysInstNo")
 	private Integer sendSysInstNo;
-
+	
 	public String getSendChlCd() {
 		return this.sendChlCd;
 	}
