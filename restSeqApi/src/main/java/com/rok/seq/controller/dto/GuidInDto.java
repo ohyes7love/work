@@ -2,6 +2,8 @@ package com.rok.seq.controller.dto;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +23,7 @@ public class GuidInDto {
 	@NotNull
 	@NotBlank
 	@Length(max = 3)
+	@JsonProperty("sendChlCd")
 	private String sendChlCd;
 	
 	/**
@@ -28,6 +31,7 @@ public class GuidInDto {
 	 */
 	@NotNull
 	@DecimalMax(value="99") 
+	@JsonProperty("sendSysNodeNo")
 	private Integer sendSysNodeNo;
 	
 	/**
@@ -35,6 +39,7 @@ public class GuidInDto {
 	 */
 	@NotNull
 	@DecimalMax(value="99") 
+	@JsonProperty("sendSysInstNo")
 	private Integer sendSysInstNo;
 
 	public String getSendChlCd() {
