@@ -28,13 +28,13 @@ public class RedisConfig {
 	/**
 	 *  redis host 정보
 	 */
-    @Value("${spring.redis.host}")
+    @Value("${spring.data.redis.host}")
     private String redisHost;
 	
     /**
 	 *  redis port 정보
 	 */
-    @Value("${spring.redis.port}")
+    @Value("${spring.data.redis.port}")
     private String redisPort;
 	
     /**

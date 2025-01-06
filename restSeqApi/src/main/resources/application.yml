@@ -3,11 +3,7 @@ server:
     max-threads: 512
   port: 9091
 spring:
-  redis:
-    lettuce:
-      pool:
-        max-active: 512
-        max-idle: 512
-        min-idle: 2
-    port: 6379
-    host: 127.0.0.1
+  data:
+    redis:
+      port: 6379
+      host: 127.0.0.1
