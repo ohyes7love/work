@@ -21,7 +21,7 @@ import jakarta.validation.Valid;
 
 /**
  * 시퀀스 채번과 GUID 채번을 위한 컨트롤러 클래스
- * 
+ *
  * @author     ohyes7love@naver.com
  * @version    1.0.0
  * @since      1.0.0
@@ -67,8 +67,8 @@ public class SeqApiController {
 		if (guid.getBytes().length != 30) {
 			throw new RuntimeException("GUID 생성오류(길이)");
 		}
-		
-		logger.info("GUID: {}", guid) ;
+
+		logger.info("GUID: {}", guid);
 
 		GuidOutDto out = new GuidOutDto();
 		out.setGuid(guid);
@@ -101,7 +101,7 @@ public class SeqApiController {
 
 		return out;
 	}
-	
+
 	/**
 	 * 요청을 받아 현재 시퀀스 번호와 날짜를 리턴한다.
 	 * <p>
@@ -120,9 +120,9 @@ public class SeqApiController {
 		CurrSeqOutDto out = new CurrSeqOutDto();
 
 		try {
-			SequenceStateDto serviceOut = seqService.getCurrVal() ;
+			SequenceStateDto serviceOut = seqService.getCurrVal();
 			out.setSequence(serviceOut.getCurrentSequence());
-			out.setDate(serviceOut.getDate()) ;
+			out.setDate(serviceOut.getDate());
 		} catch (Exception e) {
 			logger.error("#####오류내용: ", e);
 			throw new RuntimeException("시퀀스 조회 오류");

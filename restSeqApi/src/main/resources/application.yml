@@ -7,3 +7,13 @@ spring:
     redis:
       port: 6379
       host: 127.0.0.1
+  kafka:
+    bootstrap-servers: localhost:9092 # Kafka 브로커 주소
+    consumer:
+      group-id: myGroup # 컨슈머 그룹 ID
+      auto-offset-reset: earliest # 컨슈머 시작 위치 (earliest: 처음부터, latest: 가장 최근부터)
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer

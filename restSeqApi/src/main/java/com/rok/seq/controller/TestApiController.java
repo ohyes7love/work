@@ -12,8 +12,8 @@ import com.rok.seq.service.GenSeqService;
 import com.rok.seq.service.dto.SequenceStateDto;
 
 /**
- * 시퀀스 데이터를 변경하여 테스트를 위해 생성한 컨트롤러 
- * 
+ * 시퀀스 데이터를 변경하여 테스트를 위해 생성한 컨트롤러
+ *
  * @author     ohyes7love@naver.com
  * @version    1.0.0
  * @since      1.0.0
@@ -107,7 +107,7 @@ public class TestApiController {
 	 */
 	@RequestMapping("/setInit")
 	public CurrSeqOutDto setInit() {
-		
+
 		CurrSeqOutDto out = new CurrSeqOutDto();
 
 		try {

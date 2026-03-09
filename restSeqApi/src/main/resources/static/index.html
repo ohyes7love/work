@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>SeqApi 테스트</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      color: #222;
+      padding: 32px 16px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #1a1a2e;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .card h2 {
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card p {
+      font-size: .82rem;
+      color: #666;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      font-size: .8rem;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #444;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: .85rem;
+      margin-bottom: 10px;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    input:focus { border-color: #4f6ef7; }
+
+    button {
+      width: 100%;
+      padding: 9px;
+      border: none;
+      border-radius: 6px;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity .15s;
+    }
+    button:hover { opacity: .85; }
+    button:active { opacity: .7; }
+
+    .btn-primary  { background: #4f6ef7; color: #fff; }
+    .btn-warning  { background: #f59e0b; color: #fff; }
+    .btn-success  { background: #10b981; color: #fff; }
+    .btn-danger   { background: #ef4444; color: #fff; }
+
+    .result {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: .82rem;
+      font-family: 'Consolas', monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      min-height: 38px;
+      background: #f8f9fb;
+      border: 1px solid #e4e6ea;
+      color: #333;
+    }
+
+    .result.ok  { border-color: #10b981; background: #ecfdf5; color: #065f46; }
+    .result.err { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+
+    .tag {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      letter-spacing: .04em;
+    }
+    .tag-post { background: #dbeafe; color: #1d4ed8; }
+    .tag-get  { background: #d1fae5; color: #065f46; }
+    .tag-test { background: #fef3c7; color: #92400e; }
+
+    .divider {
+      grid-column: 1 / -1;
+      border: none;
+      border-top: 1px solid #e4e6ea;
+      margin: 4px 0;
+    }
+  </style>
+</head>
+<body>
+
+<h1>SeqApi 테스트 콘솔</h1>
+
+<div class="grid">
+
+  <!-- GUID 채번 -->
+  <div class="card">
+    <h2>채번 API</h2>
+    <span class="tag tag-post">POST</span>
+    <h3>GUID 채번</h3>
+    <p>/seqApi/getGuid<br>30자리 GUID를 생성합니다.</p>
+
+    <label>채널코드 (3자리)</label>
+    <input id="sendChlCd" type="text" maxlength="3" placeholder="예: ABC" value="ABC" />
+
+    <label>노드번호 (0~99)</label>
+    <input id="sendSysNodeNo" type="number" min="0" max="99" placeholder="예: 1" value="1" />
+
+    <label>인스턴스번호 (0~99)</label>
+    <input id="sendSysInstNo" type="number" min="0" max="99" placeholder="예: 1" value="1" />
+
+    <button class="btn-primary" onclick="getGuid()">GUID 채번</button>
+    <div class="result" id="res-guid">결과가 여기에 표시됩니다.</div>
+  </div>
+
+  <!-- 시퀀스 채번 -->
+  <div class="card">
+    <h2>채번 API</h2>
+    <span class="tag tag-get">GET</span>
+    <h3>시퀀스 채번</h3>
+    <p>/seqApi/getSeq<br>Redis 분산락 기반으로 순번을 채번합니다.</p>
+    <button class="btn-primary" onclick="getSeq()">시퀀스 채번</button>
+    <div class="result" id="res-seq">결과가 여기에 표시됩니다.</div>
+  </div>
+
+  <!-- 현재 시퀀스 조회 -->
+  <div class="card">
+    <h2>채번 API</h2>
+    <span class="tag tag-get">GET</span>
+    <h3>현재 시퀀스 조회</h3>
+    <p>/seqApi/getCurrentSeq<br>Redis에 저장된 현재 시퀀스 번호와 날짜를 조회합니다.</p>
+    <button class="btn-success" onclick="getCurrentSeq()">현재 시퀀스 조회</button>
+    <div class="result" id="res-currseq">결과가 여기에 표시됩니다.</div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- setInit -->
+  <div class="card">
+    <h2>테스트 API</h2>
+    <span class="tag tag-test">GET</span>
+    <h3>시퀀스 초기화</h3>
+    <p>/testApi/setInit<br>시퀀스를 0, 날짜를 오늘로 초기화합니다.</p>
+    <button class="btn-warning" onclick="setInit()">시퀀스 초기화</button>
+    <div class="result" id="res-init">결과가 여기에 표시됩니다.</div>
+  </div>
+
+  <!-- setPreDate -->
+  <div class="card">
+    <h2>테스트 API</h2>
+    <span class="tag tag-test">GET</span>
+    <h3>날짜 하루 전으로 변경</h3>
+    <p>/testApi/setPreDate<br>저장된 날짜를 전날로 변경하여 날짜 변경 시 시퀀스 리셋을 테스트합니다.</p>
+    <button class="btn-warning" onclick="setPreDate()">날짜 전날로 변경</button>
+    <div class="result" id="res-predate">결과가 여기에 표시됩니다.</div>
+  </div>
+
+  <!-- setMaxSeq -->
+  <div class="card">
+    <h2>테스트 API</h2>
+    <span class="tag tag-test">GET</span>
+    <h3>시퀀스 최대값-1로 변경</h3>
+    <p>/testApi/setMaxSeq<br>시퀀스를 9,999,999,998로 변경하여 최대값 초과 오류를 테스트합니다.</p>
+    <button class="btn-danger" onclick="setMaxSeq()">최대값-1로 변경</button>
+    <div class="result" id="res-maxseq">결과가 여기에 표시됩니다.</div>
+  </div>
+
+</div>
+
+<script>
+  const BASE = '';
+
+  async function call(method, path, body, resultId) {
+    const el = document.getElementById(resultId);
+    el.className = 'result';
+    el.textContent = '요청 중...';
+    try {
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(BASE + path, opts);
+      const text = await res.text();
+      let pretty = text;
+      try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
+      el.className = 'result ' + (res.ok ? 'ok' : 'err');
+      el.textContent = `HTTP ${res.status}\n\n${pretty}`;
+    } catch (e) {
+      el.className = 'result err';
+      el.textContent = '네트워크 오류: ' + e.message;
+    }
+  }
+
+  function getGuid() {
+    const body = {
+      sendChlCd:     document.getElementById('sendChlCd').value,
+      sendSysNodeNo: parseInt(document.getElementById('sendSysNodeNo').value),
+      sendSysInstNo: parseInt(document.getElementById('sendSysInstNo').value),
+    };
+    call('POST', '/seqApi/getGuid', body, 'res-guid');
+  }
+
+  function getSeq()        { call('GET',  '/seqApi/getSeq',        null, 'res-seq');     }
+  function getCurrentSeq() { call('GET',  '/seqApi/getCurrentSeq', null, 'res-currseq'); }
+  function setInit()       { call('GET',  '/testApi/setInit',       null, 'res-init');    }
+  function setPreDate()    { call('GET',  '/testApi/setPreDate',    null, 'res-predate'); }
+  function setMaxSeq()     { call('GET',  '/testApi/setMaxSeq',     null, 'res-maxseq');  }
+</script>
+
+</body>
+</html>
