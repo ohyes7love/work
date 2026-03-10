@@ -283,8 +283,18 @@
 </div>
 
 <script>
+  /** API 호출 Base URL (같은 호스트이므로 빈 문자열) */
   const BASE = '';
 
+  /**
+   * 범용 REST API 호출 함수.
+   * 지정한 HTTP 메서드·경로로 요청을 보내고, 결과를 화면의 result 영역에 표시한다.
+   *
+   * @param {string} method   - HTTP 메서드 (GET, POST 등)
+   * @param {string} path     - API 엔드포인트 경로 (예: /seqApi/getSeq)
+   * @param {object|null} body - POST 요청 시 전송할 JSON 바디 (GET이면 null)
+   * @param {string} resultId - 결과를 표시할 HTML 요소의 id
+   */
   async function call(method, path, body, resultId) {
     const el = document.getElementById(resultId);
     el.className = 'result';
@@ -294,6 +304,7 @@
       if (body) opts.body = JSON.stringify(body);
       const res = await fetch(BASE + path, opts);
       const text = await res.text();
+      // JSON 응답이면 보기 좋게 포맷팅
       let pretty = text;
       try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch (_) {}
       el.className = 'result ' + (res.ok ? 'ok' : 'err');
@@ -304,6 +315,11 @@
     }
   }
 
+  /* ──────────────────────────────────────
+   * 채번 API 호출 함수
+   * ────────────────────────────────────── */
+
+  /** GUID 채번 — 입력 필드에서 채널코드·노드번호·인스턴스번호를 읽어 POST 요청 */
   function getGuid() {
     const body = {
       sendChlCd:     document.getElementById('sendChlCd').value,
@@ -313,17 +329,40 @@
     call('POST', '/seqApi/getGuid', body, 'res-guid');
   }
 
+  /** 시퀀스 채번 — Redis 분산락 기반 순번 발급 */
   function getSeq()        { call('GET',  '/seqApi/getSeq',        null, 'res-seq');     }
+
+  /** 현재 시퀀스 조회 — Redis에 저장된 현재 날짜·시퀀스 값 반환 */
   function getCurrentSeq() { call('GET',  '/seqApi/getCurrentSeq', null, 'res-currseq'); }
+
+  /* ──────────────────────────────────────
+   * 테스트 API 호출 함수
+   * ────────────────────────────────────── */
+
+  /** 시퀀스 초기화 — 시퀀스를 0, 날짜를 오늘로 리셋 */
   function setInit()       { call('GET',  '/testApi/setInit',       null, 'res-init');    }
+
+  /** 날짜 전날로 변경 — 날짜 변경 시 시퀀스 리셋 테스트용 */
   function setPreDate()    { call('GET',  '/testApi/setPreDate',    null, 'res-predate'); }
+
+  /** 시퀀스 최대값-1로 변경 — 최대값 초과 오류 테스트용 */
   function setMaxSeq()     { call('GET',  '/testApi/setMaxSeq',     null, 'res-maxseq');  }
 
-  async function getAllRedisKeys() {
-    const wrap    = document.getElementById('res-redis-wrap');
-    const errBox  = document.getElementById('res-redis');
-    const tbody   = document.getElementById('redis-tbody');
+  /* ──────────────────────────────────────
+   * 관리자 API — Redis 전체 데이터 조회
+   * ────────────────────────────────────── */
 
+  /**
+   * Redis 전체 키 조회.
+   * /redisAdmin/getAllKeys API를 호출하여 Redis에 저장된
+   * 모든 키·타입·값·TTL 정보를 테이블로 렌더링한다.
+   */
+  async function getAllRedisKeys() {
+    const wrap    = document.getElementById('res-redis-wrap');   // 결과 테이블 래퍼
+    const errBox  = document.getElementById('res-redis');        // 에러 표시 영역
+    const tbody   = document.getElementById('redis-tbody');      // 테이블 tbody
+
+    // 이전 결과 초기화
     wrap.style.display  = 'none';
     errBox.style.display = 'none';
     tbody.innerHTML     = '';
@@ -333,13 +372,16 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
+      // 데이터가 없으면 안내 메시지 표시
       if (!data || data.length === 0) {
         wrap.style.display = 'block';
         tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">저장된 데이터가 없습니다.</td></tr>';
         return;
       }
 
+      // 각 키 정보를 테이블 행으로 렌더링
       data.forEach((row, i) => {
+        // TTL이 -1 또는 null이면 "영구"로 표시
         const ttlText = (row.ttl === -1 || row.ttl === null)
           ? '<span class="ttl-inf">영구</span>'
           : row.ttl;
@@ -361,6 +403,17 @@
     }
   }
 
+  /* ──────────────────────────────────────
+   * 유틸리티 함수
+   * ────────────────────────────────────── */
+
+  /**
+   * HTML 특수문자 이스케이프 — XSS 방지를 위해 사용자 입력·서버 응답을
+   * HTML에 삽입하기 전에 &, <, >, " 문자를 엔티티로 치환한다.
+   *
+   * @param {*} str - 이스케이프할 문자열
+   * @returns {string} 이스케이프된 문자열
+   */
   function escHtml(str) {
     return String(str)
       .replace(/&/g, '&amp;')
