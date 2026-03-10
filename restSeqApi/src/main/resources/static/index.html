@@ -120,9 +120,53 @@
       margin-bottom: 8px;
       letter-spacing: .04em;
     }
-    .tag-post { background: #dbeafe; color: #1d4ed8; }
-    .tag-get  { background: #d1fae5; color: #065f46; }
-    .tag-test { background: #fef3c7; color: #92400e; }
+    .tag-post  { background: #dbeafe; color: #1d4ed8; }
+    .tag-get   { background: #d1fae5; color: #065f46; }
+    .tag-test  { background: #fef3c7; color: #92400e; }
+    .tag-admin { background: #ede9fe; color: #5b21b6; }
+
+    .redis-table-wrap {
+      margin-top: 12px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .78rem;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 600;
+      text-align: left;
+      padding: 7px 10px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    td {
+      padding: 6px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: top;
+      word-break: break-all;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .badge-type {
+      display: inline-block;
+      font-size: .65rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 3px;
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    .ttl-inf { color: #94a3b8; font-style: italic; }
+    .empty-msg { text-align: center; color: #94a3b8; padding: 16px 0; }
 
     .divider {
       grid-column: 1 / -1;
@@ -210,6 +254,32 @@
     <div class="result" id="res-maxseq">결과가 여기에 표시됩니다.</div>
   </div>
 
+  <hr class="divider" />
+
+  <!-- Redis 전체 조회 -->
+  <div class="card" style="grid-column: 1 / -1;">
+    <h2>관리자 API</h2>
+    <span class="tag tag-admin">GET</span>
+    <h3>Redis 전체 데이터 조회</h3>
+    <p>/redisAdmin/getAllKeys<br>Redis에 저장된 모든 키·타입·값·TTL을 조회합니다.</p>
+    <button class="btn-primary" onclick="getAllRedisKeys()" style="max-width:200px;">전체 조회</button>
+    <div class="redis-table-wrap" id="res-redis-wrap" style="display:none;">
+      <table id="redis-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Key</th>
+            <th>Type</th>
+            <th>Value</th>
+            <th>TTL (초)</th>
+          </tr>
+        </thead>
+        <tbody id="redis-tbody"></tbody>
+      </table>
+    </div>
+    <div class="result" id="res-redis" style="display:none;"></div>
+  </div>
+
 </div>
 
 <script>
@@ -248,6 +318,56 @@
   function setInit()       { call('GET',  '/testApi/setInit',       null, 'res-init');    }
   function setPreDate()    { call('GET',  '/testApi/setPreDate',    null, 'res-predate'); }
   function setMaxSeq()     { call('GET',  '/testApi/setMaxSeq',     null, 'res-maxseq');  }
+
+  async function getAllRedisKeys() {
+    const wrap    = document.getElementById('res-redis-wrap');
+    const errBox  = document.getElementById('res-redis');
+    const tbody   = document.getElementById('redis-tbody');
+
+    wrap.style.display  = 'none';
+    errBox.style.display = 'none';
+    tbody.innerHTML     = '';
+
+    try {
+      const res = await fetch('/redisAdmin/getAllKeys');
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      if (!data || data.length === 0) {
+        wrap.style.display = 'block';
+        tbody.innerHTML = '<tr><td colspan="5" class="empty-msg">저장된 데이터가 없습니다.</td></tr>';
+        return;
+      }
+
+      data.forEach((row, i) => {
+        const ttlText = (row.ttl === -1 || row.ttl === null)
+          ? '<span class="ttl-inf">영구</span>'
+          : row.ttl;
+        tbody.innerHTML += `
+          <tr>
+            <td>${i + 1}</td>
+            <td><strong>${escHtml(row.key)}</strong></td>
+            <td><span class="badge-type">${escHtml(row.type)}</span></td>
+            <td>${escHtml(row.value ?? '')}</td>
+            <td>${ttlText}</td>
+          </tr>`;
+      });
+
+      wrap.style.display = 'block';
+    } catch (e) {
+      errBox.className     = 'result err';
+      errBox.textContent   = '오류: ' + e.message;
+      errBox.style.display = 'block';
+    }
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
 </script>
 
 </body>
